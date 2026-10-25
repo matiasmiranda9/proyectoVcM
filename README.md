@@ -8,9 +8,9 @@ Por ahora funciona solo el frontend. Los datos son ficticios y los cambios se gu
 
 ## Integrantes
 
-- Integrante 1: por completar.
-- Integrante 2: por completar.
-- Integrante 3: por completar.
+- Crisobal Valenzuela
+- Joaquin Caceres
+- Matias Miranda
 
 ## Funciones de esta entrega
 
