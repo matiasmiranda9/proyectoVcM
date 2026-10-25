@@ -1,17 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  Plus,
-  ClipboardList,
-  Clock3,
-  Activity,
-  CircleCheck,
-  UsersRound,
-  Sparkles,
-  ArrowUpRight,
-  CircleHelp,
-} from 'lucide-react';
 import { useProject } from '../context/ProjectContext';
 import { getMetrics, STATUSES } from '../lib/domain';
 import { PageHeading, RequestsTable, EmptyState } from '../components/UI';
@@ -22,51 +10,43 @@ export function MetricCards({ requests }) {
     {
       label: 'Solicitudes totales',
       value: metrics.total,
-      icon: ClipboardList,
-      color: 'teal',
       detail: 'Todas las evaluaciones',
       to: '/solicitudes',
     },
     {
       label: 'Pendientes',
       value: metrics.pending,
-      icon: Clock3,
-      color: 'amber',
       detail: 'Por iniciar evaluación',
       to: '/solicitudes?estado=Pendiente',
     },
     {
       label: 'En evaluación',
       value: metrics.inProgress,
-      icon: Activity,
-      color: 'blue',
       detail: 'Procesos en curso',
       to: '/solicitudes?estado=En%20evaluaci%C3%B3n',
     },
     {
       label: 'Completadas',
       value: metrics.completed,
-      icon: CircleCheck,
-      color: 'green',
       detail: 'Procesos finalizados',
       to: '/solicitudes?estado=Completada',
     },
   ];
+
   return (
     <div className="row g-3 metric-grid">
-      {cards.map(({ icon: Icon, ...card }) => (
+      {cards.map((card) => (
         <div className="col-6 col-xl-3" key={card.label}>
-          <Link className="metric-card" to={card.to}>
-            <div className="metric-card-top">
-              <span>{card.label}</span>
-              <span className={`metric-icon ${card.color}`}>
-                <Icon size={19} />
-              </span>
-            </div>
-            <strong>{card.value.toString().padStart(2, '0')}</strong>
-            <div className="metric-card-bottom">
-              <span>{card.detail}</span>
-              <ArrowUpRight size={15} />
+          <Link
+            className="card metric-card h-100 text-decoration-none"
+            to={card.to}
+          >
+            <div className="card-body">
+              <p className="card-title mb-2">{card.label}</p>
+              <strong className="fs-3">{card.value}</strong>
+              <p className="card-text small text-secondary mt-2 mb-0">
+                {card.detail}
+              </p>
             </div>
           </Link>
         </div>
@@ -76,54 +56,47 @@ export function MetricCards({ requests }) {
 }
 
 export function Distribution({ requests }) {
-  const counts = STATUSES.map(
-    (status) => requests.filter((request) => request.status === status).length,
-  );
-  const colors = ['#e4b76b', '#6187b4', '#318b7c', '#c2cbd0'];
-  let cursor = 0;
-  const stops = counts.map((count, index) => {
-    const start = cursor;
-    cursor += requests.length ? (count / requests.length) * 100 : 0;
-    return `${colors[index]} ${start}% ${cursor}%`;
-  });
+  const barColors = ['bg-warning', 'bg-primary', 'bg-success', 'bg-secondary'];
+
   return (
-    <div className="distribution">
-      <div
-        className="donut"
-        role="img"
-        aria-label={`Distribución: ${STATUSES.map((status, index) => `${counts[index]} ${status.toLowerCase()}`).join(', ')}`}
-        style={{
-          background: requests.length
-            ? `conic-gradient(${stops.join(',')})`
-            : '#e8edf0',
-        }}
-      >
-        <div>
-          <strong>{requests.length}</strong>
-          <span>solicitudes</span>
-        </div>
-      </div>
-      <div className="chart-legend">
-        {STATUSES.map((status, index) => (
-          <Link
-            to={`/solicitudes?estado=${encodeURIComponent(status)}`}
-            key={status}
-          >
-            <span
-              className="legend-dot"
-              style={{ background: colors[index] }}
-            />
-            <span>{status}</span>
-            <strong>{counts[index]}</strong>
-            <span className="legend-percentage">
-              {requests.length
-                ? Math.round((counts[index] / requests.length) * 100)
-                : 0}
-              %
-            </span>
-          </Link>
-        ))}
-      </div>
+    <div className="distribution p-3">
+      <p className="text-secondary small mb-3">
+        Total: {requests.length} solicitudes
+      </p>
+      {STATUSES.map((status, index) => {
+        const count = requests.filter(
+          (request) => request.status === status,
+        ).length;
+        const percentage = requests.length
+          ? Math.round((count / requests.length) * 100)
+          : 0;
+
+        return (
+          <div className="mb-3" key={status}>
+            <div className="d-flex justify-content-between gap-2 small mb-1">
+              <Link to={`/solicitudes?estado=${encodeURIComponent(status)}`}>
+                {status}
+              </Link>
+              <span>
+                {count} ({percentage}%)
+              </span>
+            </div>
+            <div
+              className="progress"
+              role="progressbar"
+              aria-label={status}
+              aria-valuenow={percentage}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div
+                className={`progress-bar ${barColors[index]}`}
+                style={{ width: `${percentage}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -136,66 +109,39 @@ export default function Dashboard() {
       ? requests
       : requests.filter((request) => request.status === tab)
   ).slice(0, 5);
+
   return (
     <>
       <PageHeading
-        eyebrow="UNA MIRADA A TU OPERACIÓN"
         title="Resumen general"
-        description="Todo lo que necesitas para acompañar cada evaluación."
+        description="Consulta candidatos y solicitudes de evaluación."
       >
         <Link className="btn btn-primary" to="/solicitudes/nueva">
-          <Plus size={18} /> Nueva solicitud
+          Nueva solicitud
         </Link>
       </PageHeading>
-      <div className="welcome-banner">
-        <div className="welcome-copy">
-          <span className="welcome-label">
-            <span /> GESTIÓN DE PERSONAS
-          </span>
-          <h2>El talento comienza con un buen proceso.</h2>
-          <p>
-            Organiza candidatos, coordina evaluaciones y da seguimiento en un
-            solo lugar.
-          </p>
-          <Link to="/candidatos">
-            Conoce a tus candidatos <ArrowRight size={15} />
-          </Link>
-        </div>
-        <div className="banner-art" aria-hidden="true">
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="orbit orbit-three" />
-          <div className="art-card">
-            <UsersRound size={25} />
-            <span>Personas en el centro</span>
-            <span className="art-line" />
-            <span className="art-line short" />
-          </div>
-          <span className="art-spark">
-            <Sparkles size={21} />
-          </span>
-          <span className="art-check">
-            <CircleCheck size={23} />
-          </span>
-        </div>
+
+      <div className="alert alert-info">
+        <h2 className="h6">Proyecto VcM · AquaChile</h2>
+        <p className="mb-0">
+          Demostración con datos ficticios. Los cambios se guardan solo en este
+          navegador.
+        </p>
       </div>
-      <div className="section-label-row">
-        <h2>Tu proceso, en números</h2>
-        <span>
-          <span className="live-dot" /> Datos de esta demostración
-        </span>
-      </div>
+
+      <h2 className="h5 mb-3">Resumen de solicitudes</h2>
       <MetricCards requests={requests} />
-      <div className="row g-4 dashboard-lower">
+
+      <div className="row g-4 dashboard-lower mt-1">
         <div className="col-12 col-xl-8">
           <section className="surface recent-panel">
             <div className="panel-heading">
               <div>
                 <h2>Solicitudes recientes</h2>
-                <p>Una vista rápida de los últimos procesos registrados.</p>
+                <p>Últimos procesos registrados.</p>
               </div>
               <Link className="text-link" to="/solicitudes">
-                Ver todas <ArrowRight size={15} />
+                Ver todas
               </Link>
             </div>
             <div className="tab-row" aria-label="Filtrar solicitudes recientes">
@@ -226,7 +172,7 @@ export default function Dashboard() {
                   (request) => tab === 'Todas' || request.status === tab,
                 ).length
               }{' '}
-              solicitudes <span>Actualización local</span>
+              solicitudes
             </div>
           </section>
         </div>
@@ -235,39 +181,21 @@ export default function Dashboard() {
             <div className="panel-heading">
               <div>
                 <h2>Estado de los procesos</h2>
-                <p>Distribución de tus solicitudes</p>
+                <p>Cantidad de solicitudes por estado.</p>
               </div>
-              <CircleHelp size={17} className="muted-icon" aria-hidden="true" />
             </div>
             <Distribution requests={requests} />
           </section>
         </div>
       </div>
-      <div className="row g-3 quick-actions">
-        <div className="col-md-6">
-          <Link className="quick-card" to="/candidatos/nuevo">
-            <span className="quick-icon">
-              <UsersRound size={22} />
-            </span>
-            <div>
-              <h3>Construye tu base de talento</h3>
-              <p>Registra un candidato para iniciar su proceso.</p>
-            </div>
-            <ArrowUpRight size={20} />
-          </Link>
-        </div>
-        <div className="col-md-6">
-          <Link className="quick-card" to="/indicadores">
-            <span className="quick-icon lavender">
-              <Activity size={22} />
-            </span>
-            <div>
-              <h3>Decisiones con más contexto</h3>
-              <p>Consulta el avance y la carga de evaluaciones.</p>
-            </div>
-            <ArrowUpRight size={20} />
-          </Link>
-        </div>
+
+      <div className="d-flex flex-wrap gap-2 mt-4">
+        <Link className="btn btn-outline-primary" to="/candidatos/nuevo">
+          Nuevo candidato
+        </Link>
+        <Link className="btn btn-outline-secondary" to="/indicadores">
+          Ver indicadores
+        </Link>
       </div>
     </>
   );

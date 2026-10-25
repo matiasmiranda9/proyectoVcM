@@ -12,18 +12,10 @@ export const formatDate = (value) => {
         timeZone: 'America/Santiago',
       }).format(date);
 };
-export const initials = (name) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('');
-
 export function StatusBadge({ status }) {
   const variants = {
     Pendiente: 'pending',
-    'En evaluación': 'progress',
+    'En evaluación': 'in-progress',
     Completada: 'completed',
     Cancelada: 'cancelled',
   };
@@ -44,7 +36,7 @@ export function PageHeading({ eyebrow, title, description, children, back }) {
             <ArrowLeft size={15} /> {back.label}
           </Link>
         )}
-        <p className="eyebrow">{eyebrow || 'GESTIÓN PSICOLABORAL'}</p>
+        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h1>{title}</h1>
         {description && <p className="page-description">{description}</p>}
       </div>
@@ -153,9 +145,6 @@ export function RequestsTable({ requests, candidates, compact = false }) {
               <tr key={request.id}>
                 <td>
                   <div className="person-cell">
-                    <span className="avatar">
-                      {initials(candidate?.fullName || '?')}
-                    </span>
                     <div>
                       <Link
                         className="person-name"

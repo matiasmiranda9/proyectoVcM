@@ -6,6 +6,8 @@ La aplicación utiliza exclusivamente datos ficticios y guarda los cambios en `l
 
 ![Panel de AquaEval con solicitudes e indicadores ficticios](docs/images/resumen.png)
 
+La interfaz utiliza una navegación superior sencilla, tarjetas, tablas y barras de progreso de Bootstrap 5. Los estilos adicionales están en `src/styles.css`.
+
 ## Abrir en VS Code
 
 Necesitas [Node.js](https://nodejs.org/) **24 LTS (24.15 o superior)** y VS Code. También es compatible con Node 22 desde 22.22.2. Comprueba la instalación en una terminal con `node --version` y `npm --version`.

@@ -16,9 +16,8 @@ export default function Indicators() {
   return (
     <>
       <PageHeading
-        eyebrow="VISIBILIDAD PARA COORDINAR MEJOR"
         title="Indicadores"
-        description="Transforma el estado de tus solicitudes en una visión compartida."
+        description="Consulta el avance de las solicitudes y la carga por evaluador."
       />
       <MetricCards requests={requests} />
       <div className="row g-4 mt-1">
@@ -92,7 +91,7 @@ export default function Indicators() {
       </div>
       <div className="indicator-callout">
         <div>
-          <h2>Del indicador a la acción</h2>
+          <h2>Solicitudes pendientes</h2>
           <p>Revisa los procesos pendientes para coordinar su próximo paso.</p>
         </div>
         <Link className="btn btn-light" to="/solicitudes?estado=Pendiente">

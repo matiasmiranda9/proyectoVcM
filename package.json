@@ -16,8 +16,6 @@
     "test:evidence": "vitest run --reporter=default --reporter=json --outputFile=artifacts/vitest-results.json"
   },
   "dependencies": {
-    "@fontsource-variable/dm-sans": "5.3.0",
-    "@fontsource-variable/manrope": "5.3.0",
     "bootstrap": "5.3.8",
     "lucide-react": "1.61.0",
     "react": "19.3.1",

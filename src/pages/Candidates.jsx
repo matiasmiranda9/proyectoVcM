@@ -17,7 +17,6 @@ import {
   EmptyState,
   Field,
   RequestsTable,
-  initials,
   formatDate,
 } from '../components/UI';
 import NotFound from './NotFound';
@@ -107,9 +106,6 @@ export default function Candidates() {
                   <tr key={candidate.id}>
                     <td>
                       <div className="person-cell">
-                        <span className="avatar">
-                          {initials(candidate.fullName)}
-                        </span>
                         <div>
                           <Link
                             className="person-name"
@@ -335,7 +331,6 @@ export function CandidateDetail() {
         </Link>
       </PageHeading>
       <section className="surface candidate-profile">
-        <span className="avatar large">{initials(candidate.fullName)}</span>
         <div>
           <span className="detail-label">
             <Mail size={15} /> Correo electrónico

@@ -155,10 +155,10 @@ describe('recorrido de gestión psicolaboral', () => {
     );
     expect(
       screen.getByRole('link', { name: /Solicitudes totales/ }),
-    ).toHaveTextContent('09');
+    ).toHaveTextContent('9');
     expect(
       screen.getByRole('link', { name: /Completadas.*Procesos finalizados/ }),
-    ).toHaveTextContent('03');
+    ).toHaveTextContent('3');
   });
 
   it('no crea una solicitud sin candidato, cargo, responsable y fecha', async () => {
