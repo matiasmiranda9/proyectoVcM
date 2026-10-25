@@ -6,7 +6,7 @@ La aplicación utiliza exclusivamente datos ficticios y guarda los cambios en `l
 
 ![Panel de AquaEval con solicitudes e indicadores ficticios](docs/images/resumen.png)
 
-La interfaz utiliza una navegación superior sencilla, tarjetas, tablas y barras de progreso de Bootstrap 5. Los estilos adicionales están en `src/styles.css`.
+La interfaz combina una navegación superior sencilla con tonos azul petróleo y verde agua, tarjetas por estado, tablas y barras de progreso de Bootstrap 5. Los estilos adicionales están en `src/styles.css`.
 
 ## Abrir en VS Code
 

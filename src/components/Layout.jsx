@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Waves } from 'lucide-react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 
@@ -15,13 +16,16 @@ export default function Layout() {
 
   return (
     <div className="app-layout">
-      <header className="navbar navbar-expand-md navbar-dark bg-primary">
+      <header className="navbar navbar-expand-md navbar-dark app-navbar">
         <div className="container">
           <Link
             className="navbar-brand"
             to="/"
             onClick={() => setMenuOpen(false)}
           >
+            <span className="brand-icon" aria-hidden="true">
+              <Waves size={20} />
+            </span>
             AquaEval
           </Link>
           <button

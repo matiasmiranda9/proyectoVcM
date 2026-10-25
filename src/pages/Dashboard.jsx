@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  ClipboardList,
+  Clock3,
+  Activity,
+  CircleCheck,
+  Waves,
+} from 'lucide-react';
 import { useProject } from '../context/ProjectContext';
 import { getMetrics, STATUSES } from '../lib/domain';
 import { PageHeading, RequestsTable, EmptyState } from '../components/UI';
@@ -10,24 +17,32 @@ export function MetricCards({ requests }) {
     {
       label: 'Solicitudes totales',
       value: metrics.total,
+      tone: 'teal',
+      icon: ClipboardList,
       detail: 'Todas las evaluaciones',
       to: '/solicitudes',
     },
     {
       label: 'Pendientes',
       value: metrics.pending,
+      tone: 'amber',
+      icon: Clock3,
       detail: 'Por iniciar evaluación',
       to: '/solicitudes?estado=Pendiente',
     },
     {
       label: 'En evaluación',
       value: metrics.inProgress,
+      tone: 'blue',
+      icon: Activity,
       detail: 'Procesos en curso',
       to: '/solicitudes?estado=En%20evaluaci%C3%B3n',
     },
     {
       label: 'Completadas',
       value: metrics.completed,
+      tone: 'green',
+      icon: CircleCheck,
       detail: 'Procesos finalizados',
       to: '/solicitudes?estado=Completada',
     },
@@ -35,14 +50,19 @@ export function MetricCards({ requests }) {
 
   return (
     <div className="row g-3 metric-grid">
-      {cards.map((card) => (
+      {cards.map(({ icon: Icon, ...card }) => (
         <div className="col-6 col-xl-3" key={card.label}>
           <Link
-            className="card metric-card h-100 text-decoration-none"
+            className={`card metric-card metric-${card.tone} h-100 text-decoration-none`}
             to={card.to}
           >
             <div className="card-body">
-              <p className="card-title mb-2">{card.label}</p>
+              <div className="metric-heading">
+                <p className="card-title mb-0">{card.label}</p>
+                <span className="metric-symbol" aria-hidden="true">
+                  <Icon size={20} />
+                </span>
+              </div>
               <strong className="fs-3">{card.value}</strong>
               <p className="card-text small text-secondary mt-2 mb-0">
                 {card.detail}
@@ -56,7 +76,12 @@ export function MetricCards({ requests }) {
 }
 
 export function Distribution({ requests }) {
-  const barColors = ['bg-warning', 'bg-primary', 'bg-success', 'bg-secondary'];
+  const barColors = [
+    'state-pending',
+    'state-in-progress',
+    'state-completed',
+    'state-cancelled',
+  ];
 
   return (
     <div className="distribution p-3">
@@ -121,12 +146,17 @@ export default function Dashboard() {
         </Link>
       </PageHeading>
 
-      <div className="alert alert-info">
-        <h2 className="h6">Proyecto VcM · AquaChile</h2>
-        <p className="mb-0">
-          Demostración con datos ficticios. Los cambios se guardan solo en este
-          navegador.
-        </p>
+      <div className="welcome-panel">
+        <span className="welcome-symbol" aria-hidden="true">
+          <Waves size={28} />
+        </span>
+        <div>
+          <h2 className="h6">Proyecto VcM · AquaChile</h2>
+          <p className="mb-0">
+            Demostración con datos ficticios. Los cambios se guardan solo en
+            este navegador.
+          </p>
+        </div>
       </div>
 
       <h2 className="h5 mb-3">Resumen de solicitudes</h2>
