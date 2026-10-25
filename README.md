@@ -26,7 +26,22 @@ Los formularios revisan los campos obligatorios, los correos repetidos y las fec
 
 React con Vite, Bootstrap 5, React Router y Vitest.
 
-Los listados usan arreglos y `.map()`. El estado se maneja con `useState`, y hay componentes compartidos para tablas, campos y mensajes. Los formularios y filtros responden a los eventos del usuario. La navegación conecta las pantallas y el diseño se adapta a computador y celular.
+## Contenidos de la entrega
+
+- ✔️ Frontend desarrollado en React.
+- ✔️ Diseño responsivo utilizando Bootstrap 5.
+- ✔️ Componentes reutilizables, props, arrays y `.map()`.
+- ✔️ Gestión de estados con `useState`.
+- ✔️ Eventos, filtros y renderizado condicional.
+- ✔️ Formularios funcionales con validaciones.
+- ✔️ Navegación entre interfaces mediante React Router.
+- ✔️ Integración y funcionamiento coherente de las interfaces.
+- ✔️ Pruebas unitarias utilizando Vitest.
+- ✔️ Avances funcionales que responden a la problemática de AquaChile.
+
+**Importante:** Cada funcionalidad debe tener sentido dentro del proyecto y contribuir a resolver la problemática planteada.
+
+En esta entrega, los contenidos se aplican al mismo recorrido: registrar un candidato, crear su solicitud y seguir su evaluación. Los filtros permiten encontrar los procesos y los indicadores muestran cuántos están pendientes, en evaluación o completados.
 
 ## Cómo ejecutar
 
