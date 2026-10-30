@@ -1,4 +1,4 @@
-// Datos exclusivamente ficticios. Los correos example.com no pertenecen a candidatos reales.
+// Datos exclusivamente ficticios. No usar información personal real.
 export const demoCandidates = [
   {
     id: 'CAN-001',
@@ -7,6 +7,8 @@ export const demoCandidates = [
     position: 'Analista de calidad',
     location: 'Puerto Montt',
     createdAt: '2026-10-02T09:00:00.000Z',
+    phone: '+56 9 0000 1001',
+    family: 'Área técnica',
   },
   {
     id: 'CAN-002',
@@ -15,6 +17,8 @@ export const demoCandidates = [
     position: 'Supervisor de producción',
     location: 'Quellón',
     createdAt: '2026-10-03T10:30:00.000Z',
+    phone: '+56 9 0000 1002',
+    family: 'Operaciones',
   },
   {
     id: 'CAN-003',
@@ -23,6 +27,8 @@ export const demoCandidates = [
     position: 'Coordinador de logística',
     location: 'Puerto Varas',
     createdAt: '2026-10-05T11:00:00.000Z',
+    phone: '+56 9 0000 1003',
+    family: 'Administración',
   },
   {
     id: 'CAN-004',
@@ -31,6 +37,8 @@ export const demoCandidates = [
     position: 'Técnico de mantenimiento',
     location: 'Calbuco',
     createdAt: '2026-10-08T09:20:00.000Z',
+    phone: '+56 9 0000 1004',
+    family: 'Área técnica',
   },
   {
     id: 'CAN-005',
@@ -39,6 +47,8 @@ export const demoCandidates = [
     position: 'Prevencionista de riesgos',
     location: 'Puerto Montt',
     createdAt: '2026-10-10T14:00:00.000Z',
+    phone: '+56 9 0000 1005',
+    family: 'Profesionales',
   },
   {
     id: 'CAN-006',
@@ -47,6 +57,8 @@ export const demoCandidates = [
     position: 'Operador de planta',
     location: 'Quellón',
     createdAt: '2026-10-14T10:00:00.000Z',
+    phone: '+56 9 0000 1006',
+    family: 'Operaciones',
   },
   {
     id: 'CAN-007',
@@ -55,6 +67,8 @@ export const demoCandidates = [
     position: 'Asistente de personas',
     location: 'Puerto Varas',
     createdAt: '2026-10-17T12:00:00.000Z',
+    phone: '+56 9 0000 1007',
+    family: 'Administración',
   },
   {
     id: 'CAN-008',
@@ -63,6 +77,8 @@ export const demoCandidates = [
     position: 'Analista de abastecimiento',
     location: 'Puerto Montt',
     createdAt: '2026-10-20T09:00:00.000Z',
+    phone: '+56 9 0000 1008',
+    family: 'Administración',
   },
 ];
 
@@ -83,6 +99,7 @@ export const demoRequests = [
         note: 'Solicitud creada. Pendiente de coordinación de entrevista.',
       },
     ],
+    family: 'Administración',
   },
   {
     id: 'SOL-007',
@@ -100,6 +117,7 @@ export const demoRequests = [
         note: 'Solicitud creada por el equipo de selección.',
       },
     ],
+    family: 'Administración',
   },
   {
     id: 'SOL-006',
@@ -122,6 +140,7 @@ export const demoRequests = [
         note: 'Entrevista coordinada; evaluación en curso.',
       },
     ],
+    family: 'Operaciones',
   },
   {
     id: 'SOL-005',
@@ -144,6 +163,7 @@ export const demoRequests = [
         note: 'Entrevista iniciada; informe pendiente.',
       },
     ],
+    family: 'Profesionales',
   },
   {
     id: 'SOL-004',
@@ -161,6 +181,7 @@ export const demoRequests = [
         note: 'Solicitud creada. A la espera de entrevista.',
       },
     ],
+    family: 'Área técnica',
   },
   {
     id: 'SOL-003',
@@ -188,6 +209,7 @@ export const demoRequests = [
         note: 'Proceso de evaluación finalizado (simulación).',
       },
     ],
+    family: 'Administración',
   },
   {
     id: 'SOL-002',
@@ -210,6 +232,7 @@ export const demoRequests = [
         note: 'Vacante cerrada antes de iniciar la evaluación (simulación).',
       },
     ],
+    family: 'Operaciones',
   },
   {
     id: 'SOL-001',
@@ -237,5 +260,6 @@ export const demoRequests = [
         note: 'Proceso de evaluación finalizado (simulación).',
       },
     ],
+    family: 'Área técnica',
   },
 ];

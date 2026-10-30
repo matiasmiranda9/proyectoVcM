@@ -1,0 +1,9 @@
+{
+  "unchanged": true,
+  "sha256": {
+    "src/App.test.jsx": "4f00d0b9efc9ecad1eb937c11aa2748767361fdded738652d90eca9f0d58c955",
+    "src/lib/domain.test.js": "2aa17ffe5d1443530b651c69f687cbd0d1c1d53ecdb2c28aa1f6749c93c3c9b1",
+    "src/test/setup.js": "74851f72f93a2a23a66d9c29154c262d043fd46ce0fb18ec9ec2c41b757a56d8",
+    "vite.config.js": "5e984059e082deef2e1392319d16f9258601d90449defdbe4d74659e08837138"
+  }
+}

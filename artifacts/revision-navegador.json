@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-30T00:04:57.580Z",
+  "checks": 12,
+  "passed": [
+    "Entrada directa protegida y errores de login",
+    "Analista registra candidato con teléfono y familia; teléfono inválido rechazado",
+    "Edición mantiene correo propio y valida duplicados",
+    "Solicitud copia familia y solo admite evaluador de demo",
+    "Analista no registra evaluación y edición no reescribe solicitudes",
+    "Cerrar sesión protege historial de navegación y acceso directo",
+    "Evaluador ve solo sus solicitudes e indicadores",
+    "Evaluador no accede a otras asignaciones ni a edición/creación",
+    "Evaluación valida datos, registra fecha y actualiza estado",
+    "Actualiza evaluación, completa y conserva registro al recargar",
+    "Cancelación conserva evaluación y migración al recargar",
+    "Otra cuenta evaluadora no ve la solicitud nueva"
+  ],
+  "errors": []
+}

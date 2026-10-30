@@ -819,3 +819,109 @@ a:focus-visible {
     display: none;
   }
 }
+
+/* Acceso de demostración y controles de sesión. */
+.login-page {
+  min-height: 100vh;
+  padding-top: 8vh;
+  padding-bottom: 35px;
+}
+.login-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 25px;
+  background: var(--aqua-navy);
+}
+.login-heading h1 {
+  color: #fff;
+  font-size: 1.6rem;
+  margin: 0 0 5px;
+}
+.login-heading p {
+  color: #d6e6e5;
+  font-size: 0.85rem;
+  margin: 0;
+}
+.login-card .field-group {
+  margin-bottom: 18px;
+}
+.demo-accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.demo-account {
+  border: 1px solid #c8ddd4;
+  border-radius: 7px;
+  background: white;
+  padding: 12px;
+  text-align: left;
+  color: #345c50;
+}
+.demo-account:hover {
+  background: #e3f0e8;
+  border-color: #6b9f8e;
+}
+.demo-account strong,
+.demo-account span,
+.demo-account small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.demo-account strong {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+.demo-account span,
+.demo-account small {
+  font-size: 0.8rem;
+}
+.session-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-left: auto;
+}
+.session-label {
+  max-width: 180px;
+  color: #d4e8e4;
+}
+.session-label strong,
+.session-label span {
+  display: block;
+}
+.session-label strong {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.session-label span {
+  font-size: 0.75rem;
+}
+.session-controls .btn {
+  font-size: 0.8rem;
+}
+.heading-actions {
+  max-width: 100%;
+}
+.detail-summary strong,
+.detail-summary p {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 991px) {
+  .session-controls {
+    margin: 12px 0 3px;
+  }
+  .app-navbar .navbar-nav {
+    padding-top: 10px;
+  }
+}
+@media (max-width: 767px) {
+  .login-page {
+    padding-top: 25px;
+  }
+  .login-heading {
+    padding: 20px;
+  }
+}
