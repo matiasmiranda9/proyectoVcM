@@ -18,7 +18,11 @@ Este es un reparto para exponer. Cuando expliquen sus aportes personales, mencio
 
 - Abrir el proyecto en VS Code y ejecutar `npm.cmd run dev`.
 - Abrir la aplicación y dejar una segunda terminal disponible para `npm.cmd test`.
-- Dejar abiertos `src/pages/Candidates.jsx`, `src/pages/Requests.jsx`, `src/components/UI.jsx`, `src/context/ProjectContext.jsx`, `src/pages/Indicators.jsx`, `src/App.jsx`, `src/lib/domain.test.js` y `src/App.test.jsx`.
+- Crisobal comienza con `analista@example.com`. Todas las cuentas de demostración usan la contraseña pública `Demo1234`.
+- Joaquin crea la solicitud como analista y la asigna a Daniela Pérez. Antes de actualizarla, cierra sesión e ingresa con `daniela@example.com`.
+- Matias vuelve a cerrar sesión e ingresa como `analista@example.com` para mostrar los indicadores globales.
+- Ensayar estos cambios de cuenta: ahora son parte del tiempo de la demostración.
+- Dejar abiertos `src/pages/Candidates.jsx`, `src/pages/Requests.jsx`, `src/components/UI.jsx`, `src/context/ProjectContext.jsx`, `src/pages/Indicators.jsx`, `src/App.jsx`, `src/Root.jsx`, `src/lib/domain.test.js` y `src/App.test.jsx`.
 - Aumentar el tamaño de letra de VS Code y del navegador para que el profesor pueda leer.
 - Preparar estos datos ficticios: Sofía Demo, `sofia.exposicion@example.com`, Analista de calidad, Puerto Montt. Si ya usaron ese correo en un ensayo, cambien a uno nuevo.
 - Para la solicitud, usar Daniela Pérez como evaluadora ficticia, una fecha de la semana siguiente y prioridad Alta.
@@ -28,7 +32,9 @@ Este es un reparto para exponer. Cuando expliquen sus aportes personales, mencio
 
 ### 0:00–1:30 · Presentar el problema y el alcance
 
-**Mostrar:** resumen general de la aplicación.
+**Hacer:** entrar desde el login con `analista@example.com` y `Demo1234`. Después mostrar el resumen general.
+
+**Nota de acceso:** el login es una simulación del frontend. Se puede decir: “Entramos como analista para registrar candidatos y solicitudes. Después cambiaremos al perfil de evaluador para continuar el mismo proceso”.
 
 **Crisobal:**
 
@@ -58,11 +64,11 @@ Este es un reparto para exponer. Cuando expliquen sus aportes personales, mencio
 
 ### 3:30–6:00 · Explicar el código del formulario y del listado
 
-**Mostrar:** `CandidateForm` en `src/pages/Candidates.jsx`. Señalar `useState`, `change` y `submit`. Después mostrar `filtered.map` en el mismo archivo y el componente `Field` de `src/components/UI.jsx`.
+**Mostrar:** `CandidateForm` y `CandidateEditor` en `src/pages/Candidates.jsx`. El primero abre el formulario compartido de registro y edición; en `CandidateEditor` señalar `useState`, `change` y `submit`. Después mostrar `filtered.map` en el mismo archivo y el componente `Field` de `src/components/UI.jsx`.
 
 **Crisobal:**
 
-> En el código, este componente se llama CandidateForm. Aquí usamos useState para guardar lo que se escribe en el formulario. Tenemos un estado para los valores y otro para los errores.
+> CandidateForm abre el formulario compartido que se llama CandidateEditor. Ahí usamos useState para guardar lo que se escribe en el formulario. Tenemos un estado para los valores y otro para los errores.
 >
 > El value del campo muestra lo que está guardado en ese estado. Cuando escribimos, se ejecuta onChange y se actualiza el valor. Cuando enviamos el formulario, se ejecuta onSubmit.
 >
@@ -78,7 +84,7 @@ Este es un reparto para exponer. Cuando expliquen sus aportes personales, mencio
 
 ### 6:00–8:00 · Crear una solicitud desde la ficha
 
-**Hacer:** desde la ficha recién creada, pulsar Crear solicitud. Mostrar el candidato y el cargo precargados. Intentar enviar sin evaluador ni fecha; luego completarlos y crear la solicitud con prioridad Alta.
+**Hacer:** seguir con la cuenta de analista. Desde la ficha recién creada, pulsar Crear solicitud. Mostrar el candidato y el cargo precargados. Revisar la familia de cargo, asignar la solicitud a **Daniela Pérez**, elegir una fecha y crearla con prioridad Alta. Antes de completarlos, intentar enviar sin evaluador ni fecha para mostrar los errores.
 
 **Joaquin:**
 
@@ -116,7 +122,13 @@ Este es un reparto para exponer. Cuando expliquen sus aportes personales, mencio
 
 ### 9:30–12:00 · Cambiar el estado y revisar el historial
 
-**Hacer:** abrir la solicitud. Elegir En evaluación e intentar guardar sin observación. Escribir “Entrevista de demostración coordinada” y guardar. Luego elegir Completada, escribir “Seguimiento de demostración finalizado” y guardar.
+**Hacer:** cerrar la sesión de analista e ingresar con `daniela@example.com` y `Demo1234`. Buscar la misma solicitud, ahora dentro de las asignadas a Daniela. Elegir En evaluación e intentar guardar sin observación; después escribir “Entrevista de demostración coordinada” y guardar. Abrir **Registrar evaluación**, completar la fecha y un resultado u observaciones ficticias; guardarla. Finalmente completar el proceso desde el seguimiento o desde la evaluación.
+
+**Joaquin, al cambiar de cuenta:**
+
+> Ahora entro como Daniela, que es la evaluadora asignada. Con este perfil aparecen sus solicitudes y puede registrar la evaluación. La cuenta de analista queda para registrar candidatos y solicitudes y consultar el avance.
+
+**Nota:** mostrar brevemente la sección Evaluación. Su fecha corresponde a la evaluación, no a la fecha objetivo de la solicitud. Una evaluación registrada en un proceso completado queda en consulta.
 
 **Joaquin:**
 
@@ -140,7 +152,7 @@ Este es un reparto para exponer. Cuando expliquen sus aportes personales, mencio
 
 ### 12:00–14:00 · Indicadores e integración
 
-**Hacer:** volver al Resumen general y abrir Indicadores. Mostrar que las cantidades incluyen la solicitud que se acaba de completar. Señalar la carga de evaluadores.
+**Hacer:** cerrar la sesión de Daniela y entrar nuevamente con `analista@example.com` y `Demo1234`. Volver al Resumen general y abrir Indicadores. Así se muestran los indicadores globales, no solo los de las solicitudes de Daniela. Mostrar que las cantidades incluyen la solicitud que se acaba de completar y señalar la carga de evaluadores.
 
 **Matias:**
 
@@ -174,7 +186,11 @@ Este es un reparto para exponer. Cuando expliquen sus aportes personales, mencio
 
 ### 16:00–18:00 · Navegación y diseño responsive
 
-**Mostrar:** rutas en `src/App.jsx` y `BrowserRouter` en `src/main.jsx`. En el navegador, reducir el ancho y abrir el menú móvil; mostrar un formulario y el desplazamiento de la tabla.
+**Mostrar:** `src/Root.jsx`, rutas en `src/App.jsx` y `BrowserRouter` en `src/main.jsx`. En el navegador, reducir el ancho y abrir el menú móvil; mostrar un formulario y el desplazamiento de la tabla.
+
+**Matias, sobre el acceso:**
+
+> Root revisa si hay una sesión antes de mostrar la aplicación. Si no hay, muestra el login. Después le pasa a App la cuenta y los permisos de su rol. La sesión de demostración guarda el id de la cuenta en sessionStorage de esta pestaña. Para un uso real, el servidor tendría que comprobar las cuentas y los permisos; esto todavía no tiene backend.
 
 **Matias:**
 
@@ -234,7 +250,7 @@ Esperar el resultado antes de decir cuántas pasaron. La versión revisada tiene
 
 **Matias:**
 
-> Con esto terminamos la demostración. El avance permite registrar candidatos, crear solicitudes, encontrar los procesos y seguir sus cambios hasta el cierre. Para la siguiente etapa falta el backend, la base de datos y el acceso con usuarios. Gracias, profesor; quedamos atentos a sus preguntas.
+> Con esto terminamos la demostración. El avance permite registrar candidatos, crear solicitudes, encontrar los procesos y seguir sus cambios hasta el cierre. Para la siguiente etapa falta el backend, la base de datos y comprobar las cuentas y los permisos desde el servidor. Gracias, profesor; quedamos atentos a sus preguntas.
 
 El cierre debe ser breve para dejar casi todo este bloque disponible para preguntas. Si el profesor las hace durante la demostración, pueden usar este tiempo como margen. Si no hay preguntas, vuelvan al caso de Sofía y hagan un repaso corto del recorrido.
 

@@ -17,7 +17,7 @@ export function MetricCards({ requests }) {
     {
       label: 'Solicitudes totales',
       value: metrics.total,
-      tone: 'teal',
+      tone: 'total',
       icon: ClipboardList,
       detail: 'Todas las evaluaciones',
       to: '/solicitudes',
@@ -33,7 +33,7 @@ export function MetricCards({ requests }) {
     {
       label: 'En evaluación',
       value: metrics.inProgress,
-      tone: 'blue',
+      tone: 'progress',
       icon: Activity,
       detail: 'Procesos en curso',
       to: '/solicitudes?estado=En%20evaluaci%C3%B3n',
@@ -127,7 +127,7 @@ export function Distribution({ requests }) {
 }
 
 export default function Dashboard() {
-  const { candidates, requests } = useProject();
+  const { candidates, requests, permissions, session } = useProject();
   const [tab, setTab] = useState('Todas');
   const displayed = (
     tab === 'Todas'
@@ -141,9 +141,11 @@ export default function Dashboard() {
         title="Resumen general"
         description="Consulta candidatos y solicitudes de evaluación."
       >
-        <Link className="btn btn-primary" to="/solicitudes/nueva">
-          Nueva solicitud
-        </Link>
+        {permissions.manageRequests && (
+          <Link className="btn btn-primary" to="/solicitudes/nueva">
+            Nueva solicitud
+          </Link>
+        )}
       </PageHeading>
 
       <div className="welcome-panel">
@@ -159,7 +161,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <h2 className="h5 mb-3">Resumen de solicitudes</h2>
+      <h2 className="h5 mb-3">
+        {session?.role === 'evaluator'
+          ? 'Resumen de mis solicitudes'
+          : 'Resumen de solicitudes'}
+      </h2>
       <MetricCards requests={requests} />
 
       <div className="row g-4 dashboard-lower mt-1">
@@ -220,9 +226,11 @@ export default function Dashboard() {
       </div>
 
       <div className="d-flex flex-wrap gap-2 mt-4">
-        <Link className="btn btn-outline-primary" to="/candidatos/nuevo">
-          Nuevo candidato
-        </Link>
+        {permissions.manageCandidates && (
+          <Link className="btn btn-outline-primary" to="/candidatos/nuevo">
+            Nuevo candidato
+          </Link>
+        )}
         <Link className="btn btn-outline-secondary" to="/indicadores">
           Ver indicadores
         </Link>

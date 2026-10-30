@@ -8,9 +8,9 @@ Este documento describe el alcance académico de la segunda entrega para el caso
 
 ## Alcance de la entrega
 
-Aplicación React con Vite, Bootstrap 5, React Router y Vitest. Un usuario de demostración puede consultar y registrar candidatos ficticios, crear solicitudes, filtrarlas, actualizar su estado y visualizar indicadores. Los cambios se conservan en el `localStorage` del navegador.
+Aplicación React con Vite, Bootstrap 5, React Router y Vitest. El analista de demostración puede registrar y editar candidatos ficticios y crear solicitudes. El evaluador consulta sus solicitudes asignadas, registra evaluaciones y actualiza estados. Ambos perfiles consultan indicadores de los datos que pueden ver. Los cambios se conservan en el `localStorage` del navegador.
 
-No hay autenticación, autorización, backend ni base de datos. Tampoco se generan diagnósticos, puntajes psicométricos ni decisiones automáticas sobre candidatos. Los datos deben permanecer ficticios o anonimizados y no deben incluir información clínica.
+El login y los permisos se simulan en el frontend con cuentas ficticias. No hay autenticación de servidor, backend ni base de datos. Tampoco se generan diagnósticos, puntajes psicométricos ni decisiones automáticas sobre candidatos. Los datos deben permanecer ficticios o anonimizados y no deben incluir información clínica.
 
 ## Requisitos funcionales y criterios de aceptación
 
@@ -27,6 +27,11 @@ No hay autenticación, autorización, backend ni base de datos. Tampoco se gener
 | RF-09 | Navegar entre vistas.                | React Router permite ir entre inicio, candidatos, solicitudes, detalles y panel de indicadores. Los enlaces tienen destinos funcionales.                                  |
 | RF-10 | Conservar la demostración local.     | Un registro o cambio de estado válido permanece después de recargar en el mismo navegador y origen. La interfaz informa que se trata de almacenamiento local simulado.    |
 | RF-11 | Mostrar resultados de interacción.   | Se presentan errores junto a los campos y un estado vacío cuando una búsqueda no encuentra registros.                                                                     |
+
+| RF-12 | Editar candidatos. | El analista puede actualizar un candidato manteniendo su id y validando el correo sin duplicarlo. Las solicitudes históricas conservan su cargo y familia originales. |
+| RF-13 | Registrar teléfono y familia de cargo. | El candidato tiene teléfono y familia; la solicitud copia la familia al crearse y permite elegirla. El teléfono es opcional y se valida cuando se ingresa; registros anteriores se conservan. |
+| RF-14 | Registrar una evaluación. | El evaluador asignado registra fecha válida, resultado u observaciones de al menos 10 caracteres y estado. La evaluación queda asociada a la solicitud e incorpora una entrada al historial. |
+| RF-15 | Acceder según rol. | El login valida cuentas ficticias. El analista administra candidatos y crea solicitudes; el evaluador solo accede a solicitudes asignadas y a sus candidatos e indicadores. Cerrar sesión vuelve al login. |
 
 ## Requisitos técnicos y de calidad
 
@@ -50,22 +55,27 @@ No hay autenticación, autorización, backend ni base de datos. Tampoco se gener
 6. Los indicadores provienen de los registros actuales; no son cifras reales de AquaChile.
 7. El historial y los registros locales no constituyen una auditoría de producción: el navegador puede modificarlos o eliminarlos.
 
+8. Una evaluación completada queda solo para consulta. Una solicitud antigua completada sin evaluación puede recibir el registro una vez, sin reabrirse.
+9. El rol y la asignación se comprueban en la interfaz. Estos controles no reemplazan los permisos que deberá aplicar el backend.
+
 ## Recorrido de aceptación
 
-1. Abrir la aplicación y comprobar los indicadores con los datos iniciales.
-2. Intentar registrar un candidato con campos vacíos o correo inválido y observar los errores.
-3. Registrar un candidato ficticio válido y localizarlo en el listado.
-4. Crear una solicitud para ese candidato y abrir su detalle.
-5. Encontrarla por búsqueda y por filtros de estado y prioridad.
-6. Cambiar de `Pendiente` a `En evaluación`; comprobar el historial y los indicadores.
-7. Completar la solicitud y comprobar que ya no permite nuevas transiciones.
-8. Recargar y verificar la persistencia en ese navegador.
-9. Ejecutar `npm test` y `npm run build`; contrastar resultados con la evidencia de [PRUEBAS.md](PRUEBAS.md).
+1. Abrir el login, comprobar credenciales incorrectas e ingresar como analista.
+2. Intentar registrar datos inválidos, registrar un candidato ficticio válido y editar su teléfono y familia.
+3. Crear una solicitud para ese candidato, asignarla a Daniela Pérez y encontrarla con búsqueda y filtros.
+4. Cerrar sesión e ingresar como Daniela. Comprobar que solo aparecen sus solicitudes.
+5. Registrar la fecha de evaluación y un resultado u observaciones; guardar en En evaluación y después en Completada.
+6. Comprobar historial y consulta de evaluación completada, sin permitir modificaciones.
+7. Ingresar como Martín y comprobar que no ve la solicitud asignada a Daniela.
+8. Volver al analista, consultar indicadores y recargar para verificar el guardado.
+9. Probar menú, formularios y tablas en móvil. Ejecutar `npm test` y `npm run build`.
+
+Las pruebas originales y su evidencia se describen en [PRUEBAS.md](PRUEBAS.md). La revisión de las funciones nuevas está en [REVISION_LOGIN.md](REVISION_LOGIN.md).
 
 ## Fuera de alcance y siguiente etapa
 
 - API y base de datos para persistencia centralizada y acceso concurrente.
-- Autenticación, roles y permisos según las funciones reales de la organización.
+- Autenticación y autorización reales en el servidor, según las funciones de la organización.
 - Revisión profesional de las reglas y del proceso de evaluación.
 - Protección de datos personales, consentimiento, retención, cifrado y auditoría de producción.
 - Informes profesionales, archivos adjuntos, notificaciones e integración con otros sistemas.

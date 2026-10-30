@@ -26,7 +26,7 @@ export default function Indicators() {
             <div className="panel-heading">
               <div>
                 <h2>Distribución por estado</h2>
-                <p>Incluye todos los procesos registrados.</p>
+                <p>Procesos disponibles para tu perfil.</p>
               </div>
               <ChartNoAxesCombined size={20} className="muted-icon" />
             </div>

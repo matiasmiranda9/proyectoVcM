@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Waves } from 'lucide-react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
+import { ROLE_LABELS } from '../lib/auth';
 
 const navigation = [
   { to: '/', label: 'Resumen general', end: true },
@@ -10,13 +11,13 @@ const navigation = [
   { to: '/indicadores', label: 'Indicadores' },
 ];
 
-export default function Layout() {
+export default function Layout({ onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { notice, setNotice, storageWarning } = useProject();
+  const { notice, setNotice, storageWarning, session } = useProject();
 
   return (
     <div className="app-layout">
-      <header className="navbar navbar-expand-md navbar-dark app-navbar">
+      <header className="navbar navbar-expand-lg navbar-dark app-navbar">
         <div className="container">
           <Link
             className="navbar-brand"
@@ -58,7 +59,26 @@ export default function Layout() {
                 </NavLink>
               ))}
             </div>
-            <span className="navbar-text small">Proyecto VcM · Demo</span>
+            {session ? (
+              <div className="session-controls">
+                <div className="session-label">
+                  <strong>{session.name}</strong>
+                  <span>{ROLE_LABELS[session.role]}</span>
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-light"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onLogout?.();
+                  }}
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            ) : (
+              <span className="navbar-text small">Proyecto VcM · Demo</span>
+            )}
           </nav>
         </div>
       </header>

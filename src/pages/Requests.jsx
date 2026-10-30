@@ -23,6 +23,7 @@ import {
   STATUSES,
   PRIORITIES,
   allowedTransitions,
+  JOB_FAMILIES,
 } from '../lib/domain';
 import {
   PageHeading,
@@ -36,7 +37,7 @@ import {
 import NotFound from './NotFound';
 
 export default function Requests() {
-  const { requests, candidates } = useProject();
+  const { requests, candidates, permissions, session } = useProject();
   const [params, setParams] = useSearchParams();
   const search = params.get('buscar') || '';
   const status = params.get('estado') || '';
@@ -62,18 +63,26 @@ export default function Requests() {
         title="Solicitudes de evaluación"
         description="Coordina cada proceso, desde la solicitud hasta su cierre."
       >
-        <Link className="btn btn-primary" to="/solicitudes/nueva">
-          <Plus size={18} /> Nueva solicitud
-        </Link>
+        {permissions.manageRequests && (
+          <Link className="btn btn-primary" to="/solicitudes/nueva">
+            <Plus size={18} /> Nueva solicitud
+          </Link>
+        )}
       </PageHeading>
       <section className="surface">
         <div className="panel-heading">
           <div>
             <h2>
-              Todos los procesos{' '}
+              {session?.role === 'evaluator'
+                ? 'Mis solicitudes'
+                : 'Todos los procesos'}{' '}
               <span className="count-pill">{requests.length}</span>
             </h2>
-            <p>Consulta candidatos, responsables y estados en un solo lugar.</p>
+            <p>
+              {session?.role === 'evaluator'
+                ? 'Aquí aparecen las solicitudes asignadas a tu usuario de demostración.'
+                : 'Consulta candidatos, responsables y estados en un solo lugar.'}
+            </p>
           </div>
           <SlidersHorizontal size={20} className="muted-icon" />
         </div>
@@ -135,7 +144,7 @@ export default function Requests() {
 }
 
 export function RequestForm() {
-  const { candidates, addRequest } = useProject();
+  const { candidates, addRequest, permissions, evaluators } = useProject();
   const [params] = useSearchParams();
   const selected = candidates.find(
     (candidate) => candidate.id === params.get('candidato'),
@@ -143,6 +152,7 @@ export function RequestForm() {
   const [values, setValues] = useState({
     candidateId: selected?.id || '',
     position: selected?.position || '',
+    family: selected?.family || 'Por definir',
     evaluator: '',
     dueDate: '',
     priority: 'Normal',
@@ -160,6 +170,9 @@ export function RequestForm() {
             position:
               candidates.find((candidate) => candidate.id === value)
                 ?.position || '',
+            family:
+              candidates.find((candidate) => candidate.id === value)?.family ||
+              'Por definir',
           }
         : {}),
     }));
@@ -190,6 +203,11 @@ export function RequestForm() {
               <span className="step-label">02 / SOLICITUD</span>
             </div>
             <div className="form-body">
+              {errors._form && (
+                <div className="alert alert-danger" role="alert">
+                  {errors._form}
+                </div>
+              )}
               <div className="row g-4">
                 <div className="col-12">
                   <Field
@@ -215,10 +233,12 @@ export function RequestForm() {
                       </select>
                     )}
                   </Field>
-                  <Link className="field-link" to="/candidatos/nuevo">
-                    ¿Aún no está registrado? Crear candidato{' '}
-                    <ArrowRight size={13} />
-                  </Link>
+                  {permissions.manageCandidates && (
+                    <Link className="field-link" to="/candidatos/nuevo">
+                      ¿Aún no está registrado? Crear candidato{' '}
+                      <ArrowRight size={13} />
+                    </Link>
+                  )}
                 </div>
                 <div className="col-md-6">
                   <Field
@@ -235,6 +255,27 @@ export function RequestForm() {
                         maxLength={100}
                         placeholder="Ej. Analista de calidad"
                       />
+                    )}
+                  </Field>
+                </div>
+                <div className="col-md-6">
+                  <Field
+                    name="family"
+                    label="Familia de cargo"
+                    error={errors.family}
+                    hint="Agrupa los cargos del proceso. Puedes dejarla por definir mientras coordinas la solicitud."
+                  >
+                    {(props) => (
+                      <select
+                        {...props}
+                        className={`form-select ${errors.family ? 'is-invalid' : ''}`}
+                        value={values.family}
+                        onChange={change}
+                      >
+                        {JOB_FAMILIES.map((family) => (
+                          <option key={family}>{family}</option>
+                        ))}
+                      </select>
                     )}
                   </Field>
                 </div>
@@ -257,8 +298,9 @@ export function RequestForm() {
                     )}
                   </Field>
                   <datalist id="evaluators">
-                    <option value="Daniela Pérez" />
-                    <option value="Martín Herrera" />
+                    {evaluators.map((evaluator) => (
+                      <option key={evaluator.id} value={evaluator.name} />
+                    ))}
                   </datalist>
                 </div>
                 <div className="col-md-6">
@@ -364,8 +406,9 @@ export function RequestForm() {
               </li>
             </ol>
             <p className="small mb-0">
-              Esta operación es simulada y se guarda localmente. No asigna
-              tareas ni notifica al profesional.
+              Esta operación es simulada y se guarda localmente. El evaluador
+              verá la solicitud al entrar con su cuenta de demostración en este
+              mismo navegador. No se envían notificaciones.
             </p>
           </aside>
         </div>
@@ -376,7 +419,7 @@ export function RequestForm() {
 
 export function RequestDetail() {
   const { id } = useParams();
-  const { requests, candidates, updateStatus } = useProject();
+  const { requests, candidates, updateStatus, permissions } = useProject();
   const request = requests.find((item) => item.id === id);
   const [nextStatus, setNextStatus] = useState('');
   const [note, setNote] = useState('');
@@ -414,6 +457,16 @@ export function RequestDetail() {
       icon: CalendarDays,
     },
     { label: 'Prioridad', value: request.priority, icon: Flag },
+    {
+      label: 'Familia de cargo',
+      value: request.family || 'Por definir',
+      icon: BriefcaseBusiness,
+    },
+    {
+      label: 'Fecha de solicitud',
+      value: formatDate(request.createdAt),
+      icon: CalendarDays,
+    },
   ];
   return (
     <>
@@ -453,6 +506,82 @@ export function RequestDetail() {
                 </div>
               ))}
             </div>
+          </section>
+          <section className="surface mb-4">
+            <div className="panel-heading">
+              <div>
+                <h2>Observaciones de coordinación</h2>
+                <p>Información registrada al crear la solicitud.</p>
+              </div>
+            </div>
+            <div className="form-body">
+              <p className="mb-0 text-break">
+                {request.notes ||
+                  'No se registraron observaciones de coordinación.'}
+              </p>
+            </div>
+          </section>
+          <section className="surface mb-4">
+            <div className="panel-heading">
+              <div>
+                <h2>Evaluación</h2>
+                <p>Registro general asociado a esta solicitud.</p>
+              </div>
+              {permissions.evaluate && request.status !== 'Cancelada' && (
+                <Link
+                  className="text-link"
+                  to={`/solicitudes/${id}/evaluacion`}
+                >
+                  {request.evaluation
+                    ? request.status === 'Completada'
+                      ? 'Ver evaluación'
+                      : 'Actualizar evaluación'
+                    : 'Registrar evaluación'}{' '}
+                  <ArrowRight size={15} />
+                </Link>
+              )}
+            </div>
+            {request.evaluation ? (
+              <div className="form-body">
+                <div className="row g-4">
+                  <div className="col-sm-6">
+                    <span className="detail-label">Fecha de evaluación</span>
+                    <strong>
+                      {formatDate(request.evaluation.evaluatedAt)}
+                    </strong>
+                  </div>
+                  <div className="col-sm-6">
+                    <span className="detail-label">
+                      Estado de la evaluación
+                    </span>
+                    <StatusBadge status={request.evaluation.status} />
+                  </div>
+                  <div className="col-12">
+                    <span className="detail-label">Resultado general</span>
+                    <p className="mb-0 text-break">
+                      {request.evaluation.result ||
+                        'Sin resultado general registrado.'}
+                    </p>
+                  </div>
+                  <div className="col-12">
+                    <span className="detail-label">
+                      Observaciones de evaluación
+                    </span>
+                    <p className="mb-0 text-break">
+                      {request.evaluation.observations ||
+                        'Sin observaciones adicionales.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="form-body">
+                <p className="mb-0 text-secondary">
+                  Aún no se ha registrado la fecha ni la información de esta
+                  evaluación.
+                </p>
+              </div>
+            )}
           </section>
           <section className="surface timeline-panel">
             <div className="panel-heading">
@@ -499,54 +628,63 @@ export function RequestDetail() {
               </div>
             </div>
             {transitions.length ? (
-              <form onSubmit={submit} className="form-body" noValidate>
-                <Field name="nextStatus" label="Nuevo estado">
-                  {(props) => (
-                    <select
-                      {...props}
-                      className="form-select"
-                      value={nextStatus}
-                      onChange={(event) => {
-                        setNextStatus(event.target.value);
-                        setError('');
-                      }}
-                    >
-                      <option value="">Seleccionar estado</option>
-                      {transitions.map((status) => (
-                        <option key={status}>{status}</option>
-                      ))}
-                    </select>
+              permissions.updateStatus ? (
+                <form onSubmit={submit} className="form-body" noValidate>
+                  <Field name="nextStatus" label="Nuevo estado">
+                    {(props) => (
+                      <select
+                        {...props}
+                        className="form-select"
+                        value={nextStatus}
+                        onChange={(event) => {
+                          setNextStatus(event.target.value);
+                          setError('');
+                        }}
+                      >
+                        <option value="">Seleccionar estado</option>
+                        {transitions.map((status) => (
+                          <option key={status}>{status}</option>
+                        ))}
+                      </select>
+                    )}
+                  </Field>
+                  <Field
+                    name="statusNote"
+                    label="Observación"
+                    hint="Deja una nota de al menos 5 caracteres."
+                  >
+                    {(props) => (
+                      <textarea
+                        {...props}
+                        className="form-control"
+                        rows={4}
+                        value={note}
+                        maxLength={500}
+                        onChange={(event) => setNote(event.target.value)}
+                        placeholder="¿Qué cambió en este proceso?"
+                      />
+                    )}
+                  </Field>
+                  {error && (
+                    <div className="alert alert-danger py-2" role="alert">
+                      {error}
+                    </div>
                   )}
-                </Field>
-                <Field
-                  name="statusNote"
-                  label="Observación"
-                  hint="Deja una nota de al menos 5 caracteres."
-                >
-                  {(props) => (
-                    <textarea
-                      {...props}
-                      className="form-control"
-                      rows={4}
-                      value={note}
-                      maxLength={500}
-                      onChange={(event) => setNote(event.target.value)}
-                      placeholder="¿Qué cambió en este proceso?"
-                    />
-                  )}
-                </Field>
-                {error && (
-                  <div className="alert alert-danger py-2" role="alert">
-                    {error}
-                  </div>
-                )}
-                <button className="btn btn-primary w-100" type="submit">
-                  Guardar cambio <ArrowRight size={17} />
-                </button>
-                <p className="local-save-note">
-                  Actualización simulada · guardado local
-                </p>
-              </form>
+                  <button className="btn btn-primary w-100" type="submit">
+                    Guardar cambio <ArrowRight size={17} />
+                  </button>
+                  <p className="local-save-note">
+                    Actualización simulada · guardado local
+                  </p>
+                </form>
+              ) : (
+                <div className="form-body">
+                  <p className="mb-0 text-secondary">
+                    Tu perfil permite consultar el seguimiento. El profesional
+                    asignado registra los cambios y la evaluación.
+                  </p>
+                </div>
+              )
             ) : (
               <div className="closed-state">
                 <span>
@@ -557,12 +695,14 @@ export function RequestDetail() {
                   Esta solicitud está {request.status.toLowerCase()}. Su
                   historial se conserva para consulta.
                 </p>
-                <Link
-                  className="text-link"
-                  to={`/solicitudes/nueva?candidato=${request.candidateId}`}
-                >
-                  Crear otro proceso <ArrowRight size={15} />
-                </Link>
+                {permissions.manageRequests && (
+                  <Link
+                    className="text-link"
+                    to={`/solicitudes/nueva?candidato=${request.candidateId}`}
+                  >
+                    Crear otro proceso <ArrowRight size={15} />
+                  </Link>
+                )}
               </div>
             )}
           </section>

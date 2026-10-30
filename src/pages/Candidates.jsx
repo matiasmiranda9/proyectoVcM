@@ -8,9 +8,12 @@ import {
   BriefcaseBusiness,
   ShieldCheck,
   UsersRound,
+  Pencil,
+  Phone,
+  FolderOpen,
 } from 'lucide-react';
 import { useProject } from '../context/ProjectContext';
-import { matchesSearch } from '../lib/domain';
+import { matchesSearch, JOB_FAMILIES } from '../lib/domain';
 import {
   PageHeading,
   SearchInput,
@@ -22,7 +25,7 @@ import {
 import NotFound from './NotFound';
 
 export default function Candidates() {
-  const { candidates, requests } = useProject();
+  const { candidates, requests, permissions } = useProject();
   const [search, setSearch] = useState('');
   const [location, setLocation] = useState('');
   const locations = [
@@ -42,9 +45,11 @@ export default function Candidates() {
         title="Candidatos"
         description="Cada persona, conectada con su proceso de evaluación."
       >
-        <Link className="btn btn-primary" to="/candidatos/nuevo">
-          <Plus size={18} /> Nuevo candidato
-        </Link>
+        {permissions.manageCandidates && (
+          <Link className="btn btn-primary" to="/candidatos/nuevo">
+            <Plus size={18} /> Nuevo candidato
+          </Link>
+        )}
       </PageHeading>
       <section className="surface">
         <div className="panel-heading">
@@ -129,13 +134,24 @@ export default function Candidates() {
                       </span>
                     </td>
                     <td>
-                      <Link
-                        className="row-action"
-                        to={`/candidatos/${candidate.id}`}
-                        aria-label={`Ver ficha de ${candidate.fullName}`}
-                      >
-                        <ArrowRight size={17} />
-                      </Link>
+                      <div className="d-flex gap-1">
+                        <Link
+                          className="row-action"
+                          to={`/candidatos/${candidate.id}`}
+                          aria-label={`Ver ficha de ${candidate.fullName}`}
+                        >
+                          <ArrowRight size={17} />
+                        </Link>
+                        {permissions.manageCandidates && (
+                          <Link
+                            className="row-action"
+                            to={`/candidatos/${candidate.id}/editar`}
+                            aria-label={`Editar a ${candidate.fullName}`}
+                          >
+                            <Pencil size={16} />
+                          </Link>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -155,13 +171,28 @@ export default function Candidates() {
 }
 
 export function CandidateForm() {
-  const { addCandidate } = useProject();
+  return <CandidateEditor />;
+}
+
+export function CandidateEdit() {
+  const { id } = useParams();
+  const { candidates } = useProject();
+  const candidate = candidates.find((item) => item.id === id);
+  if (!candidate) return <NotFound />;
+  return <CandidateEditor key={candidate.id} candidate={candidate} />;
+}
+
+function CandidateEditor({ candidate }) {
+  const { addCandidate, updateCandidate, permissions } = useProject();
   const navigate = useNavigate();
+  const editing = Boolean(candidate);
   const [values, setValues] = useState({
-    fullName: '',
-    email: '',
-    position: '',
-    location: '',
+    fullName: candidate?.fullName || '',
+    email: candidate?.email || '',
+    position: candidate?.position || '',
+    location: candidate?.location || '',
+    phone: candidate?.phone || '',
+    family: candidate?.family || 'Por definir',
   });
   const [errors, setErrors] = useState({});
   const change = (event) =>
@@ -171,18 +202,36 @@ export function CandidateForm() {
     }));
   const submit = (event) => {
     event.preventDefault();
-    const result = addCandidate(values);
+    const result = editing
+      ? updateCandidate(candidate.id, values)
+      : addCandidate(values);
     if (result.errors) {
       setErrors(result.errors);
       document.getElementById(Object.keys(result.errors)[0])?.focus();
     } else navigate(`/candidatos/${result.id}`);
   };
+  if (!permissions.manageCandidates) {
+    return (
+      <section className="surface p-4">
+        <h1>Registro no disponible</h1>
+        <p>Tu perfil permite consultar los candidatos de tus solicitudes.</p>
+        <Link to="/candidatos">Volver a candidatos</Link>
+      </section>
+    );
+  }
   return (
     <>
       <PageHeading
-        title="Nuevo candidato"
-        description="El primer paso para un proceso de selección ordenado."
-        back={{ to: '/candidatos', label: 'Volver a candidatos' }}
+        title={editing ? 'Editar candidato' : 'Nuevo candidato'}
+        description={
+          editing
+            ? 'Actualiza los datos del candidato sin cambiar sus solicitudes anteriores.'
+            : 'El primer paso para un proceso de selección ordenado.'
+        }
+        back={{
+          to: editing ? `/candidatos/${candidate.id}` : '/candidatos',
+          label: editing ? 'Volver a la ficha' : 'Volver a candidatos',
+        }}
       />
       <div className="row g-4">
         <div className="col-lg-8">
@@ -192,9 +241,16 @@ export function CandidateForm() {
                 <h2>Información del candidato</h2>
                 <p>Los campos con * son obligatorios.</p>
               </div>
-              <span className="step-label">01 / REGISTRO</span>
+              <span className="step-label">
+                {editing ? 'DATOS DEL CANDIDATO' : '01 / REGISTRO'}
+              </span>
             </div>
             <div className="form-body">
+              {errors._form && (
+                <div className="alert alert-danger" role="alert">
+                  {errors._form}
+                </div>
+              )}
               <div className="row g-4">
                 <div className="col-md-6">
                   <Field
@@ -233,6 +289,49 @@ export function CandidateForm() {
                         placeholder="andrea@example.com"
                         autoComplete="off"
                       />
+                    )}
+                  </Field>
+                </div>
+                <div className="col-md-6">
+                  <Field
+                    label="Teléfono"
+                    name="phone"
+                    error={errors.phone}
+                    required={false}
+                    hint="Puedes completarlo al editar. Usa solo un teléfono ficticio."
+                  >
+                    {(props) => (
+                      <input
+                        {...props}
+                        type="tel"
+                        inputMode="tel"
+                        className={`form-control ${errors.phone ? 'is-invalid' : ''}`}
+                        value={values.phone}
+                        onChange={change}
+                        maxLength={25}
+                        placeholder="Ej. +56 9 0000 0000"
+                        autoComplete="off"
+                      />
+                    )}
+                  </Field>
+                </div>
+                <div className="col-md-6">
+                  <Field
+                    label="Familia de cargo"
+                    name="family"
+                    error={errors.family}
+                  >
+                    {(props) => (
+                      <select
+                        {...props}
+                        className={`form-select ${errors.family ? 'is-invalid' : ''}`}
+                        value={values.family}
+                        onChange={change}
+                      >
+                        {JOB_FAMILIES.map((family) => (
+                          <option key={family}>{family}</option>
+                        ))}
+                      </select>
                     )}
                   </Field>
                 </div>
@@ -279,11 +378,15 @@ export function CandidateForm() {
             </div>
             <div className="form-actions">
               <span>Guardado en este navegador</span>
-              <Link className="btn btn-light" to="/candidatos">
+              <Link
+                className="btn btn-light"
+                to={editing ? `/candidatos/${candidate.id}` : '/candidatos'}
+              >
                 Cancelar
               </Link>
               <button className="btn btn-primary" type="submit">
-                Registrar candidato <ArrowRight size={17} />
+                {editing ? 'Guardar cambios' : 'Registrar candidato'}{' '}
+                <ArrowRight size={17} />
               </button>
             </div>
           </form>
@@ -300,7 +403,8 @@ export function CandidateForm() {
             <h3>¿Qué sigue?</h3>
             <p>
               Desde la ficha podrás crear una solicitud, asignar un evaluador y
-              seguir el estado de la evaluación.
+              seguir el estado de la evaluación. Los datos del candidato se
+              pueden actualizar sin borrar el historial de sus solicitudes.
             </p>
           </aside>
         </div>
@@ -311,7 +415,7 @@ export function CandidateForm() {
 
 export function CandidateDetail() {
   const { id } = useParams();
-  const { candidates, requests } = useProject();
+  const { candidates, requests, permissions } = useProject();
   const candidate = candidates.find((item) => item.id === id);
   if (!candidate) return <NotFound />;
   const related = requests.filter((request) => request.candidateId === id);
@@ -323,14 +427,38 @@ export function CandidateDetail() {
         description={`Registrado el ${formatDate(candidate.createdAt)} · Información ficticia`}
         back={{ to: '/candidatos', label: 'Volver a candidatos' }}
       >
-        <Link
-          className="btn btn-primary"
-          to={`/solicitudes/nueva?candidato=${candidate.id}`}
-        >
-          <Plus size={18} /> Crear solicitud
-        </Link>
+        <div className="d-flex flex-wrap gap-2">
+          {permissions.manageCandidates && (
+            <Link
+              className="btn btn-light"
+              to={`/candidatos/${candidate.id}/editar`}
+            >
+              <Pencil size={16} /> Editar candidato
+            </Link>
+          )}
+          {permissions.manageRequests && (
+            <Link
+              className="btn btn-primary"
+              to={`/solicitudes/nueva?candidato=${candidate.id}`}
+            >
+              <Plus size={18} /> Crear solicitud
+            </Link>
+          )}
+        </div>
       </PageHeading>
       <section className="surface candidate-profile">
+        <div>
+          <span className="detail-label">
+            <Phone size={15} /> Teléfono
+          </span>
+          <strong>{candidate.phone || 'Sin registrar'}</strong>
+        </div>
+        <div>
+          <span className="detail-label">
+            <FolderOpen size={15} /> Familia de cargo
+          </span>
+          <strong>{candidate.family || 'Por definir'}</strong>
+        </div>
         <div>
           <span className="detail-label">
             <Mail size={15} /> Correo electrónico
@@ -367,12 +495,14 @@ export function CandidateDetail() {
             title="Este candidato aún no tiene solicitudes"
             description="Crea su primera solicitud para iniciar el seguimiento."
           >
-            <Link
-              className="btn btn-primary"
-              to={`/solicitudes/nueva?candidato=${id}`}
-            >
-              Crear solicitud
-            </Link>
+            {permissions.manageRequests && (
+              <Link
+                className="btn btn-primary"
+                to={`/solicitudes/nueva?candidato=${id}`}
+              >
+                Crear solicitud
+              </Link>
+            )}
           </EmptyState>
         )}
       </section>

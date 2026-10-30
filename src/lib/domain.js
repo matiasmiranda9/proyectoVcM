@@ -5,6 +5,14 @@ export const STATUSES = [
   'Cancelada',
 ];
 export const PRIORITIES = ['Normal', 'Alta'];
+export const JOB_FAMILIES = [
+  'Por definir',
+  'Administración',
+  'Operaciones',
+  'Área técnica',
+  'Profesionales',
+  'Otra',
+];
 
 const clean = (value) => String(value ?? '').trim();
 const normalized = (value) =>
@@ -106,4 +114,45 @@ export function allowedTransitions(status) {
   if (status === 'Pendiente') return ['En evaluación', 'Cancelada'];
   if (status === 'En evaluación') return ['Completada', 'Cancelada'];
   return [];
+}
+
+// Los datos nuevos pueden completarse al editar sin invalidar registros anteriores.
+export function validateCandidateExtras(values) {
+  const errors = {};
+  const phone = clean(values.phone);
+  const digits = phone.replace(/\D/g, '');
+  if (
+    phone &&
+    (!/^\+?[\d ()-]+$/.test(phone) || digits.length < 8 || digits.length > 15)
+  ) {
+    errors.phone =
+      'Ingresa un teléfono de 8 a 15 dígitos. Puede incluir +56, espacios o guiones.';
+  }
+  if (values.family && !JOB_FAMILIES.includes(values.family))
+    errors.family = 'Selecciona una familia de cargo válida.';
+  return errors;
+}
+
+export function validateEvaluation(values, { allowCancelled = false } = {}) {
+  const errors = {};
+  if (!isISODate(clean(values.evaluatedAt)))
+    errors.evaluatedAt = 'Selecciona una fecha de evaluación válida.';
+  if (
+    !(
+      allowCancelled
+        ? ['En evaluación', 'Completada', 'Cancelada']
+        : ['En evaluación', 'Completada']
+    ).includes(values.status)
+  )
+    errors.status = 'Selecciona un estado de evaluación válido.';
+  const result = clean(values.result);
+  const observations = clean(values.observations);
+  if (!result && !observations)
+    errors.result =
+      'Registra un resultado o una observación de al menos 10 caracteres.';
+  if (result && result.length < 10)
+    errors.result = 'Describe el resultado con al menos 10 caracteres.';
+  if (observations && observations.length < 10)
+    errors.observations = 'Escribe una observación de al menos 10 caracteres.';
+  return errors;
 }

@@ -14,13 +14,28 @@ Por ahora funciona solo el frontend. Los datos son ficticios y los cambios se gu
 
 ## Funciones de esta entrega
 
-- Registrar candidatos y consultar sus datos.
-- Crear solicitudes con candidato, cargo, evaluador, fecha y prioridad.
+- Registrar, editar y consultar candidatos, incluyendo teléfono y familia de cargo.
+- Crear solicitudes con candidato, cargo, familia de cargo, evaluador, fecha y prioridad.
 - Buscar candidatos y filtrar solicitudes por estado y prioridad.
+- Registrar la fecha, el resultado u observaciones y el estado de una evaluación.
 - Cambiar el estado de una solicitud y guardar una observación en su historial.
 - Ver las cantidades por estado y las solicitudes que tiene cada evaluador.
 
-Los formularios revisan los campos obligatorios, los correos repetidos y las fechas válidas. El recorrido principal es registrar un candidato, crear su solicitud y actualizar el estado hasta terminar el proceso o cancelarlo.
+Los formularios revisan los campos obligatorios, los correos repetidos y las fechas válidas. El teléfono se valida si se completa; puede quedar pendiente. La familia de cargo comienza en “Por definir” para mantener los registros anteriores. Editar un candidato no cambia el cargo ni la familia de sus solicitudes históricas.
+
+El recorrido principal es registrar un candidato, crear su solicitud, registrar la evaluación y seguir el estado hasta terminar el proceso o cancelarlo. Una evaluación registrada en una solicitud completada queda solo para consulta. Si una solicitud antigua ya estaba completada y no tenía evaluación, permite agregarla una vez sin reabrir el proceso.
+
+## Acceso de demostración
+
+Al abrir la aplicación aparece el login. Todas estas cuentas usan la contraseña pública **`Demo1234`**:
+
+- `analista@example.com`: analista de reclutamiento. Registra y edita candidatos, crea solicitudes y consulta las evaluaciones.
+- `daniela@example.com`: profesional evaluador, Daniela Pérez.
+- `martin@example.com`: profesional evaluador, Martín Herrera.
+
+Cada evaluador ve solo sus solicitudes asignadas y puede registrar su evaluación y actualizar el estado. Para cambiar de perfil, usar **Cerrar sesión**.
+
+Es un login simulado en el frontend, no una autenticación segura de producción. No usen contraseñas ni datos personales reales. La sesión guarda solo el identificador de la cuenta en `sessionStorage` de la pestaña; los candidatos y las solicitudes siguen en `localStorage`.
 
 ## Tecnologías
 
@@ -35,31 +50,31 @@ Se necesita Node.js 24 LTS, desde la versión 24.15.
 2. Abrir en VS Code la carpeta que contiene `package.json`.
 3. Ejecutar en la terminal:
 
-```bash
-npm ci
-npm run dev
+```powershell
+npm.cmd ci
+npm.cmd run dev
 ```
 
 Después, abrir la dirección que aparece en la terminal. Para detenerlo, usar `Ctrl+C`.
 
-En PowerShell, si `npm` da problemas con los permisos de scripts, se pueden usar `npm.cmd ci` y `npm.cmd run dev`.
+En otras terminales también se pueden usar `npm ci` y `npm run dev`.
 
 ## Pruebas
 
 Para ejecutar las pruebas con Vitest:
 
-```bash
-npm test
+```powershell
+npm.cmd test
 ```
 
 Hay pruebas de validación, búsqueda, filtros, estados y del recorrido completo de candidato a solicitud. En la última ejecución pasaron las 32 pruebas.
 
 Los casos y resultados están en [Pruebas](docs/PRUEBAS.md), y el reporte de esa ejecución está en [vitest-results.json](artifacts/vitest-results.json).
 
-Para generar la versión de producción se usa `npm run build`.
+Para generar la versión de producción se usa `npm.cmd run build`. La comparación con el proyecto de referencia y los pasos para revisar los nuevos roles están en [Revisión del login](docs/REVISION_LOGIN.md).
 
 ## Qué falta
 
-Falta conectar el frontend a un backend y una base de datos, agregar inicio de sesión y permisos, e implementar los informes y las notificaciones. Esta entrega no realiza evaluaciones psicológicas reales.
+Falta conectar el frontend a un backend y una base de datos, validar las cuentas y los permisos en el servidor e implementar los informes y las notificaciones. Esta entrega no realiza evaluaciones psicológicas reales.
 
 El alcance implementado y los requisitos pendientes están en [Requisitos](docs/REQUISITOS.md).
