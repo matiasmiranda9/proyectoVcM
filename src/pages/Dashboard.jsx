@@ -17,7 +17,7 @@ export function MetricCards({ requests }) {
     {
       label: 'Solicitudes totales',
       value: metrics.total,
-      tone: 'teal',
+      tone: 'total',
       icon: ClipboardList,
       detail: 'Todas las evaluaciones',
       to: '/solicitudes',
@@ -33,7 +33,7 @@ export function MetricCards({ requests }) {
     {
       label: 'En evaluación',
       value: metrics.inProgress,
-      tone: 'blue',
+      tone: 'progress',
       icon: Activity,
       detail: 'Procesos en curso',
       to: '/solicitudes?estado=En%20evaluaci%C3%B3n',
