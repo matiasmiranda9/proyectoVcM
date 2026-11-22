@@ -39,10 +39,15 @@ import NotFound from './NotFound';
 export default function Requests() {
   const { requests, candidates, permissions, session } = useProject();
   const [params, setParams] = useSearchParams();
+  const [sort, setSort] = useState({ key: 'dueDate', direction: 'desc' });
+  const [page, setPage] = useState(1);
+  const [preview, setPreview] = useState(null);
+  const pageSize = 10;
   const search = params.get('buscar') || '';
   const status = params.get('estado') || '';
   const priority = params.get('prioridad') || '';
-  const setFilter = (key, value) =>
+  const setFilter = (key, value) => {
+    setPage(1);
     setParams(
       (current) => {
         const next = new URLSearchParams(current);
@@ -52,11 +57,32 @@ export default function Requests() {
       },
       { replace: true },
     );
+  };
   const filtered = filterRequests(requests, candidates, {
     search,
     status,
     priority,
   });
+  const sorted = [...filtered].sort((a, b) => {
+    const candidateA = candidates.find((item) => item.id === a.candidateId)?.fullName || '';
+    const candidateB = candidates.find((item) => item.id === b.candidateId)?.fullName || '';
+    const values = {
+      candidate: [candidateA, candidateB],
+      status: [a.status, b.status],
+      evaluator: [a.evaluator, b.evaluator],
+      dueDate: [a.dueDate, b.dueDate],
+      priority: [a.priority, b.priority],
+    }[sort.key];
+    const result = String(values[0]).localeCompare(String(values[1]), 'es', { numeric: true });
+    return sort.direction === 'asc' ? result : -result;
+  });
+  const pageCount = Math.max(1, Math.ceil(sorted.length / pageSize));
+  const visibleRequests = sorted.slice((page - 1) * pageSize, page * pageSize);
+  const changeSort = (key) => {
+    setSort((current) => ({ key, direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc' }));
+    setPage(1);
+  };
+  const previewCandidate = preview && candidates.find((item) => item.id === preview.candidateId);
   return (
     <>
       <PageHeading
@@ -123,14 +149,39 @@ export default function Requests() {
           )}
         </div>
         {filtered.length ? (
-          <RequestsTable requests={filtered} candidates={candidates} />
+          <RequestsTable requests={visibleRequests} candidates={candidates} sort={sort} onSort={changeSort} onPreview={setPreview} />
         ) : (
           <EmptyState />
         )}
         <div className="table-footer" aria-live="polite">
-          Mostrando {filtered.length} de {requests.length} solicitudes
-          <span>Seguimiento de demostración</span>
+          <span>Mostrando {visibleRequests.length} de {filtered.length} resultados · {requests.length} solicitudes registradas</span>
+          {pageCount > 1 && <div className="pagination-controls">
+            <button className="btn btn-sm btn-light" type="button" disabled={page === 1} onClick={() => setPage((value) => value - 1)}>Anterior</button>
+            <span>Página {page} de {pageCount}</span>
+            <button className="btn btn-sm btn-light" type="button" disabled={page === pageCount} onClick={() => setPage((value) => value + 1)}>Siguiente</button>
+          </div>}
+          <span>Ordena desde los encabezados · Seguimiento de demostración</span>
         </div>
+        {preview && <div className="quick-view-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPreview(null); }}>
+          <section className="quick-view-modal" role="dialog" aria-modal="true" aria-labelledby="quick-view-title">
+            <div className="quick-view-header">
+              <div><p className="eyebrow">SOLICITUD · {preview.id}</p><h2 id="quick-view-title">{previewCandidate?.fullName || 'Candidato'}</h2><p>{preview.position}</p></div>
+              <button type="button" className="btn-close" aria-label="Cerrar detalle" onClick={() => setPreview(null)} />
+            </div>
+            <div className="quick-view-body">
+              <div className="quick-view-grid">
+                <div><span>Estado</span><StatusBadge status={preview.status} /></div>
+                <div><span>Responsable</span><strong>{preview.evaluator}</strong></div>
+                <div><span>Fecha objetivo</span><strong>{formatDate(preview.dueDate)}</strong></div>
+                <div><span>Prioridad</span><strong>{preview.priority}</strong></div>
+                <div><span>Familia de cargo</span><strong>{preview.family || 'Por definir'}</strong></div>
+                <div><span>Correo del candidato</span><strong>{previewCandidate?.email || 'No disponible'}</strong></div>
+              </div>
+              <div className="quick-view-notes"><strong>Observaciones de coordinación</strong><p>{preview.notes || 'Sin observaciones registradas.'}</p></div>
+            </div>
+            <div className="quick-view-actions"><button type="button" className="btn btn-light" onClick={() => setPreview(null)}>Cerrar</button><Link className="btn btn-primary" to={`/solicitudes/${preview.id}`} onClick={() => setPreview(null)}>Abrir ficha completa <ArrowRight size={16} /></Link></div>
+          </section>
+        </div>}
       </section>
       <div className="inline-note">
         <Info size={17} />
@@ -297,11 +348,6 @@ export function RequestForm() {
                       />
                     )}
                   </Field>
-                  <datalist id="evaluators">
-                    {evaluators.map((evaluator) => (
-                      <option key={evaluator.id} value={evaluator.name} />
-                    ))}
-                  </datalist>
                 </div>
                 <div className="col-md-6">
                   <Field

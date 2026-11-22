@@ -120,17 +120,18 @@ export function Field({ label, name, error, children, hint, required = true }) {
   );
 }
 
-export function RequestsTable({ requests, candidates, compact = false }) {
+export function RequestsTable({ requests, candidates, compact = false, sort, onSort, onPreview }) {
+  const sortButton = (label, key) => <button type="button" className="table-sort" onClick={() => onSort?.(key)} aria-label={`Ordenar por ${label}`} aria-pressed={sort?.key === key}>{label}{sort?.key === key ? (sort.direction === 'asc' ? ' ↑' : ' ↓') : ' ↕'}</button>;
   return (
     <div className="table-responsive">
       <table className="table requests-table align-middle mb-0">
         <thead>
           <tr>
-            <th>Candidato / cargo</th>
-            <th>Estado</th>
-            {!compact && <th>Evaluador</th>}
-            <th>Fecha objetivo</th>
-            <th>Prioridad</th>
+            <th>{sortButton('Candidato / cargo', 'candidate')}</th>
+            <th>{sortButton('Estado', 'status')}</th>
+            {!compact && <th>{sortButton('Evaluador', 'evaluator')}</th>
+            <th>{sortButton('Fecha objetivo', 'dueDate')}</th>
+            <th>{sortButton('Prioridad', 'priority')}</th>
             <th>
               <span className="visually-hidden">Ver solicitud</span>
             </th>
@@ -175,13 +176,10 @@ export function RequestsTable({ requests, candidates, compact = false }) {
                   </span>
                 </td>
                 <td>
-                  <Link
-                    className="row-action"
-                    to={`/solicitudes/${request.id}`}
-                    aria-label={`Ver solicitud ${request.id}`}
-                  >
-                    <ArrowRight size={17} />
-                  </Link>
+                  <div className="row-actions">
+                    {onPreview && <button className="row-action" type="button" aria-label={`Vista rápida de solicitud ${request.id}`} onClick={() => onPreview(request)}><Search size={16} /></button>}
+                    <Link className="row-action" to={`/solicitudes/${request.id}`} aria-label={`Ver solicitud ${request.id}`}><ArrowRight size={17} /></Link>
+                  </div>
                 </td>
               </tr>
             );
