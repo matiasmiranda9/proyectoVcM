@@ -240,7 +240,7 @@ describe('consulta, filtros y rutas', () => {
     await user.click(
       screen.getByRole('button', { name: 'Vista rápida de solicitud SOL-008' }),
     );
-    expect(screen.getByRole('dialog', { name: 'Camila Soto' })).toBeVisible();
+    expect(screen.getByRole('dialog', { name: 'Vicente Alarcón' })).toBeVisible();
     expect(screen.getByText('Responsable')).toBeVisible();
     await user.click(screen.getByRole('button', { name: 'Cerrar detalle' }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -252,7 +252,7 @@ describe('consulta, filtros y rutas', () => {
     renderApp('/solicitudes');
     await user.click(screen.getByRole('button', { name: 'Ordenar por Candidato / cargo' }));
     const rows = within(screen.getByRole('table')).getAllByRole('row');
-    expect(rows[1]).toHaveTextContent('Agustín');
+    expect(rows[1]).toHaveTextContent('Antonia Ríos');
   });
 
   it('muestra el estado sin resultados y permite restablecer todos los filtros', async () => {
