@@ -337,15 +337,19 @@ export function RequestForm() {
                     error={errors.evaluator}
                   >
                     {(props) => (
-                      <input
+                      <select
                         {...props}
-                        className={`form-control ${errors.evaluator ? 'is-invalid' : ''}`}
+                        className={`form-select ${errors.evaluator ? 'is-invalid' : ''}`}
                         value={values.evaluator}
                         onChange={change}
-                        maxLength={100}
-                        placeholder="Nombre ficticio del profesional"
-                        list="evaluators"
-                      />
+                      >
+                        <option value="">Selecciona un responsable registrado</option>
+                        {evaluators.map((evaluator) => (
+                          <option key={evaluator.id} value={evaluator.name}>
+                            {evaluator.name}
+                          </option>
+                        ))}
+                      </select>
                     )}
                   </Field>
                 </div>

@@ -69,9 +69,9 @@ describe('recorrido de gestión psicolaboral', () => {
     expect(screen.getByLabelText(/^Cargo a evaluar/)).toHaveValue(
       'Analista de procesos',
     );
-    await user.type(
+    await user.selectOptions(
       screen.getByLabelText(/^Evaluador responsable/),
-      'Profesional Demo',
+      'Daniela Pérez',
     );
     fireEvent.change(screen.getByLabelText(/^Fecha objetivo/), {
       target: { value: '2026-11-05' },
@@ -231,6 +231,28 @@ describe('consulta, filtros y rutas', () => {
     expect(
       screen.getByRole('heading', { name: 'Benjamín Vera' }),
     ).toBeVisible();
+  });
+
+
+  it('permite abrir una vista rápida de solicitud sin salir del listado', async () => {
+    const user = userEvent.setup();
+    renderApp('/solicitudes');
+    await user.click(
+      screen.getByRole('button', { name: 'Vista rápida de solicitud SOL-008' }),
+    );
+    expect(screen.getByRole('dialog', { name: 'Camila Soto' })).toBeVisible();
+    expect(screen.getByText('Responsable')).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Cerrar detalle' }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.getByRole('table')).toBeVisible();
+  });
+
+  it('permite ordenar la tabla de solicitudes por candidato', async () => {
+    const user = userEvent.setup();
+    renderApp('/solicitudes');
+    await user.click(screen.getByRole('button', { name: 'Ordenar por Candidato / cargo' }));
+    const rows = within(screen.getByRole('table')).getAllByRole('row');
+    expect(rows[1]).toHaveTextContent('Agustín');
   });
 
   it('muestra el estado sin resultados y permite restablecer todos los filtros', async () => {
