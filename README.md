@@ -17,6 +17,9 @@ Por ahora funciona solo el frontend. Los datos son ficticios y los cambios se gu
 - Registrar, editar y consultar candidatos, incluyendo teléfono y familia de cargo.
 - Crear solicitudes con candidato, cargo, familia de cargo, evaluador, fecha y prioridad.
 - Buscar candidatos y filtrar solicitudes por estado y prioridad.
+- Asignar responsables desde un selector con los evaluadores registrados.
+- Ordenar la tabla de solicitudes por candidato, estado, evaluador, fecha objetivo o prioridad.
+- Consultar una vista rápida en una ventana modal y recorrer los registros mediante paginación de 10 filas.
 - Registrar la fecha, el resultado u observaciones y el estado de una evaluación.
 - Cambiar el estado de una solicitud y guardar una observación en su historial.
 - Ver las cantidades por estado y las solicitudes que tiene cada evaluador.
@@ -67,7 +70,7 @@ Para ejecutar las pruebas con Vitest:
 npm.cmd test
 ```
 
-Hay pruebas de validación, búsqueda, filtros, estados y del recorrido completo de candidato a solicitud. En la última ejecución pasaron las 32 pruebas.
+Hay pruebas de validación, búsqueda, filtros, estados y del recorrido completo de candidato a solicitud. La suite incluye casos para el selector de responsables, la vista rápida y el ordenamiento; ejecuta `npm test` para verificar el estado actual.
 
 Los casos y resultados están en [Pruebas](docs/PRUEBAS.md), y el reporte de esa ejecución está en [vitest-results.json](artifacts/vitest-results.json).
 
@@ -75,6 +78,6 @@ Para generar la versión de producción se usa `npm.cmd run build`. La comparaci
 
 ## Qué falta
 
-Falta conectar el frontend a un backend y una base de datos, validar las cuentas y los permisos en el servidor e implementar los informes y las notificaciones. Esta entrega no realiza evaluaciones psicológicas reales.
+Falta conectar el frontend a un backend y una base de datos, validar las cuentas y los permisos en el servidor e implementar los informes y las notificaciones. La paginación actual limita las filas renderizadas en la interfaz, pero todavía no es lazy loading desde una API: los datos locales se cargan completos en memoria. Esta entrega no realiza evaluaciones psicológicas reales.
 
 El alcance implementado y los requisitos pendientes están en [Requisitos](docs/REQUISITOS.md).
